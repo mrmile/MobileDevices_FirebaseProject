@@ -610,46 +610,56 @@ class _MyHomePageState extends State<MyHomePage>
 
   void _loadFromFirestone() async
   {
+    //print("Error getting document");
     final db = FirebaseFirestore.instance;
-    StreamBuilder
-    (
-      stream: db
-          .collection("/Rooms/3icgGX91mT2nt8xE9Q0T/drawing_lines")
-          .orderBy("id", descending: true)
-          .snapshots(),
-      builder:
+    for(int x = 0; x < 260 - 1; x++)
+    {
+      final docRef = db.collection("/Rooms/3icgGX91mT2nt8xE9Q0T/drawing_lines").doc("$x");
+      docRef.get().then
       (
-        BuildContext context,
-        AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot,
-      )
-      {
-        if (snapshot.hasError)
+        (DocumentSnapshot doc)
         {
-          return ErrorWidget(snapshot.error.toString());
-        }
-        //if (!snapshot.hasData)
-        //{
-        //  return Center(child: CircularProgressIndicator());
-        //}
+    
+          points.add(DrawingBrushAdapted(doc.get("x") as double, doc.get("y") as double, doc.get("r") as int, doc.get("g") as int, doc.get("b") as int, doc.get("a") as int, doc.get("width") as int));
+        },
+        onError: (e) => print("Error getting document: $e"),
+      );
+    }
 
-        final querySnap = snapshot.data!;
-        final docs = querySnap.docs;
-
-        for(int x = 0; x < docs.length - 1; x++)
-        {
-          points[x]!.offsetPoint_X = docs[x].get("x");
-          points[x]!.offsetPoint_Y = docs[x].get("y");
-
-          points[x]!.color_A = docs[x].get("a");
-          points[x]!.color_R = docs[x].get("r");
-          points[x]!.color_G = docs[x].get("g");
-          points[x]!.color_B = docs[x].get("b");
-          points[x]!.lineWidth = docs[x].get("width");
-        }
-
-        return const Center(child: CircularProgressIndicator());
-      },
-    );
+    //StreamBuilder
+    //(
+    //  stream: db
+    //      .collection("/Rooms/3icgGX91mT2nt8xE9Q0T/drawing_lines")
+    //      .orderBy("id", descending: true)
+    //      .snapshots(),
+    //  builder:
+    //  (
+    //    BuildContext context,
+    //    AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot,
+    //  )
+    //  {
+    //    //if (snapshot.hasError)
+    //    //{
+    //    //  return ErrorWidget(snapshot.error.toString());
+    //    //}
+    //    //if (!snapshot.hasData)
+    //    //{
+    //    //  return Center(child: CircularProgressIndicator());
+    //    //}
+    //
+    //    final querySnap = snapshot.data!;
+    //    final docs = querySnap.docs;
+    //
+    //    for(int x = 0; x < docs.length - 1; x++)
+    //    {
+    //
+    //      points.add(DrawingBrushAdapted(docs[x].get("x") as double, docs[x].get("y") as double, docs[x].get("r") as int, docs[x].get("g") as int, docs[x].get("b") as int, docs[x].get("a") as int, docs[x].get("width") as int));
+    //    }
+    //    
+    //
+    //    return const Center(child: CircularProgressIndicator());
+    //  },
+    //);
   }
 }
 
