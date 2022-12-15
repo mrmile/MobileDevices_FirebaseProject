@@ -1,4 +1,5 @@
 //import 'dart:ffi'; //Gives some errors - because of repeated declarations?
+import 'dart:developer';
 import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -81,21 +82,26 @@ class _MyHomePageState extends State<MyHomePage>
   int currentColor_A = 54;
   int defaultLineWidth = 5;
 
+  double poss_X = 0;
+  double poss_Y = 0;
+
   int currentSelectedColor = 1;
   //DrawingBrush currentBrush = DrawingBrush({0,0}, Paint() ..color = Colors.black ..strokeCap = StrokeCap.round ..strokeWidth = 2.0);
-  //@override
-  //void initState()
-  //{
-  //  super.initState();
-  //  Color selectedColor = Colors.black;
-  //}
+
+  @override
+  void initState()
+  {
+    super.initState();
+    _loadFromFirestone();
+  }
+
 
   @override
   Widget build(BuildContext context)
   {
     final double referenceWidth = MediaQuery.of(context).size.width;
     final double referenceHeight = MediaQuery.of(context).size.height;
-
+    _loadFromFirestone();
     return Scaffold
     (
       body: Center
@@ -118,7 +124,9 @@ class _MyHomePageState extends State<MyHomePage>
                   setState //this.setState...
                   (() {
                     //points.add(DrawingBrush(details.localPosition, Paint() ..color = selectedColor ..strokeCap = StrokeCap.round ..strokeWidth = 2.0));
-                    points.add(DrawingBrushAdapted(details.localPosition.dx, details.localPosition.dy, currentColor_R, currentColor_G, currentColor_B, currentColor_A, defaultLineWidth));
+                    poss_X = details.localPosition.dx;
+                    poss_Y = details.localPosition.dy;
+                    points.add(DrawingBrushAdapted(poss_X, poss_Y, currentColor_R, currentColor_G, currentColor_B, currentColor_A, defaultLineWidth));
                   });
                 },
                 onPanUpdate: (details)
@@ -126,7 +134,9 @@ class _MyHomePageState extends State<MyHomePage>
                   setState //this.setState...
                   (() {
                     //points.add(DrawingBrush(details.localPosition, Paint() ..color = selectedColor ..strokeCap = StrokeCap.round ..strokeWidth = 2.0));
-                    points.add(DrawingBrushAdapted(details.localPosition.dx, details.localPosition.dy, currentColor_R, currentColor_G, currentColor_B, currentColor_A, defaultLineWidth));
+                    poss_X = details.localPosition.dx;
+                    poss_Y = details.localPosition.dy;
+                    points.add(DrawingBrushAdapted(poss_X, poss_Y, currentColor_R, currentColor_G, currentColor_B, currentColor_A, defaultLineWidth));
                   });
                 },
                 onPanEnd: (details)
@@ -171,7 +181,7 @@ class _MyHomePageState extends State<MyHomePage>
                               currentSelectedColor = 1;
                               setState //this.setState...
                               (() {
-                                selectedColor = Color.fromARGB(255, 244, 67, 54);
+                                //selectedColor = Color.fromARGB(255, 244, 67, 54);
                                 currentColor_R = 255;
                                 currentColor_G = 244;
                                 currentColor_B = 67;
@@ -221,7 +231,7 @@ class _MyHomePageState extends State<MyHomePage>
                               currentSelectedColor = 2;
                               setState //this.setState...
                               (() {
-                                selectedColor = Color.fromARGB(255, 33, 150, 243);
+                                //selectedColor = Color.fromARGB(255, 33, 150, 243);
                                 currentColor_R = 255;
                                 currentColor_G = 33;
                                 currentColor_B = 150;
@@ -270,7 +280,7 @@ class _MyHomePageState extends State<MyHomePage>
                               currentSelectedColor = 3;
                               setState //this.setState...
                               (() {
-                                selectedColor = Color.fromARGB(255, 255, 152, 0);
+                                //selectedColor = Color.fromARGB(255, 255, 152, 0);
                                 currentColor_R = 255;
                                 currentColor_G = 255;
                                 currentColor_B = 152;
@@ -319,7 +329,7 @@ class _MyHomePageState extends State<MyHomePage>
                               currentSelectedColor = 4;
                               setState //this.setState...
                               (() {
-                                selectedColor = Color.fromARGB(255, 76, 175, 80);
+                                //selectedColor = Color.fromARGB(255, 76, 175, 80);
                                 currentColor_R = 255;
                                 currentColor_G = 76;
                                 currentColor_B = 175;
@@ -368,7 +378,7 @@ class _MyHomePageState extends State<MyHomePage>
                               currentSelectedColor = 5;
                               setState //this.setState...
                               (() {
-                                selectedColor = Color.fromARGB(255, 255, 235, 59);
+                                //selectedColor = Color.fromARGB(255, 255, 235, 59);
                                 currentColor_R = 255;
                                 currentColor_G = 255;
                                 currentColor_B = 235;
@@ -417,7 +427,7 @@ class _MyHomePageState extends State<MyHomePage>
                               currentSelectedColor = 6;
                               setState //this.setState...
                               (() {
-                                selectedColor = Color.fromARGB(255, 0, 0, 0);
+                                //selectedColor = Color.fromARGB(255, 0, 0, 0);
                                 currentColor_R = 255;
                                 currentColor_G = 0;
                                 currentColor_B = 0;
@@ -467,7 +477,7 @@ class _MyHomePageState extends State<MyHomePage>
                               currentSelectedColor = 7;
                               setState //this.setState...
                               (() {
-                                selectedColor = Color.fromARGB(255, 255, 255, 255);
+                                //selectedColor = Color.fromARGB(255, 255, 255, 255);
                                 currentColor_R = 255;
                                 currentColor_G = 255;
                                 currentColor_B = 255;
@@ -515,6 +525,7 @@ class _MyHomePageState extends State<MyHomePage>
                                   const Icon(Icons.delete, color: Colors.grey),
                               onPressed: ()
                               {
+                                _deleteFromFirestore();
                                 points.clear();
                               }),
                         ),
@@ -530,8 +541,7 @@ class _MyHomePageState extends State<MyHomePage>
                           child: FloatingActionButton
                           (
                               backgroundColor: Colors.white,
-                              child: const Icon(Icons.chat_bubble,
-                                  color: Colors.blue),
+                              child: const Icon(Icons.chat_bubble, color: Colors.blue),
                               onPressed: ()
                               {
                                 // Will take you to the chat screen
@@ -550,14 +560,96 @@ class _MyHomePageState extends State<MyHomePage>
 
   void _saveToFirestore() async
   {
-    //final db = FirebaseFirestore.instance;
-    //final batch = db.batch();
-    //final linesRef = db.collection("/Rooms/amtAzUi4eOJxcTiE5IHt/drawing_lines");
-    //// Per tots els punts
-    //batch.set(linesRef.doc(), { "a": currentSelectedColor });
-    //batch.set(linesRef.doc(), { "a": 1 });
-    //batch.set(linesRef.doc(), { "a": 1 });
-    //await batch.commit();
+    final db = FirebaseFirestore.instance;
+    final batch = db.batch();
+    final linesRef = db.collection("/Rooms/3icgGX91mT2nt8xE9Q0T/drawing_lines");
+    // Per tots els punts
+    for(int x = 0; x < points.length - 1; x++)
+    {
+      if(points[x] != null)
+      {
+        batch.set(linesRef.doc("$x"), { "a": points[x]!.color_A, "r": points[x]!.color_R, "g": points[x]!.color_G, "b": points[x]!.color_B, "width": points[x]!.lineWidth, "x": points[x]!.offsetPoint_X, "y": points[x]!.offsetPoint_Y, "id": x });
+      }
+    }
+
+    //Testing
+    //batch.set(linesRef.doc(), { "a": 1, "r": 1, "g": 1, "b": 1, "width": 1, "x": 1, "y": 1 });
+
+    await batch.commit();
+  }
+
+  void _deleteFromFirestore() async
+  {
+    final db = FirebaseFirestore.instance;
+    final batch = db.batch();
+    final linesRef = db.collection("/Rooms/3icgGX91mT2nt8xE9Q0T/drawing_lines");
+    // Per tots els punts
+    for(int x = 0; x < points.length - 1; x++)
+    {
+      if(points[x] != null)
+      {
+        batch.delete(linesRef.doc("$x"));
+      }
+    }
+
+//    final docRef = db.collection("/Rooms/3icgGX91mT2nt8xE9Q0T/drawing_lines").doc("BJ");
+//
+//    // Remove the 'capital' field from the document
+//    final updates = <String, dynamic>
+//    {
+//      "capital": FieldValue.delete(),
+//    };
+//
+//    docRef.update(updates);
+//
+//    //Testing
+//    //batch.set(linesRef.doc(), { "a": 1, "r": 1, "g": 1, "b": 1, "width": 1, "x": 1, "y": 1 });
+//    
+//    await batch.commit();
+  }
+
+  void _loadFromFirestone() async
+  {
+    final db = FirebaseFirestore.instance;
+    StreamBuilder
+    (
+      stream: db
+          .collection("/Rooms/3icgGX91mT2nt8xE9Q0T/drawing_lines")
+          .orderBy("id", descending: true)
+          .snapshots(),
+      builder:
+      (
+        BuildContext context,
+        AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot,
+      )
+      {
+        if (snapshot.hasError)
+        {
+          return ErrorWidget(snapshot.error.toString());
+        }
+        //if (!snapshot.hasData)
+        //{
+        //  return Center(child: CircularProgressIndicator());
+        //}
+
+        final querySnap = snapshot.data!;
+        final docs = querySnap.docs;
+
+        for(int x = 0; x < docs.length - 1; x++)
+        {
+          points[x]!.offsetPoint_X = docs[x].get("x");
+          points[x]!.offsetPoint_Y = docs[x].get("y");
+
+          points[x]!.color_A = docs[x].get("a");
+          points[x]!.color_R = docs[x].get("r");
+          points[x]!.color_G = docs[x].get("g");
+          points[x]!.color_B = docs[x].get("b");
+          points[x]!.lineWidth = docs[x].get("width");
+        }
+
+        return const Center(child: CircularProgressIndicator());
+      },
+    );
   }
 }
 
@@ -592,26 +684,37 @@ class CustomPainterWidged extends CustomPainter
 
     for (int x = 0; x < pointsPass.length - 1; x++)
     {
-      Paint paint = Paint();
-      paint.color = Color.fromARGB(pointsPass[x]!.color_R, pointsPass[x]!.color_G, pointsPass[x]!.color_B, pointsPass[x]!.color_A);
-      paint.strokeWidth = 2.0;
-      paint.strokeCap = StrokeCap.round;
+      
 
       if (pointsPass[x] != null && pointsPass[x + 1] != null)
       {
+        Paint paint = Paint();
+        paint.color = Color.fromARGB(pointsPass[x]!.color_R, pointsPass[x]!.color_G, pointsPass[x]!.color_B, pointsPass[x]!.color_A);
+        paint.strokeWidth = 2.0;
+        paint.strokeCap = StrokeCap.round;
+
         Offset offsetPoint1 = Offset(pointsPass[x]!.offsetPoint_X, pointsPass[x]!.offsetPoint_Y);
         Offset offsetPoint2 = Offset(pointsPass[x + 1]!.offsetPoint_X, pointsPass[x + 1]!.offsetPoint_Y);
 
-        //Paint paint = pointsPass[x]!.brushPaint;
         canvas.drawLine(offsetPoint1, offsetPoint2, paint);
+
+        //Paint paint = pointsPass[x]!.brushPaint;
+        //canvas.drawLine(pointsPass[x]!.point, pointsPass[x + 1]!.point, paint);
       }
       else if (pointsPass[x] != null && pointsPass[x + 1] == null)
       {
+        Paint paint = Paint();
+        paint.color = Color.fromARGB(pointsPass[x]!.color_R, pointsPass[x]!.color_G, pointsPass[x]!.color_B, pointsPass[x]!.color_A);
+        paint.strokeWidth = 2.0;
+        paint.strokeCap = StrokeCap.round;
+
         Offset offsetPoint1 = Offset(pointsPass[x]!.offsetPoint_X, pointsPass[x]!.offsetPoint_Y);
-        Offset offsetPoint2 = Offset(pointsPass[x + 1]!.offsetPoint_X, pointsPass[x + 1]!.offsetPoint_Y);
+        //Offset offsetPoint2 = Offset(pointsPass[x + 1]!.offsetPoint_X, pointsPass[x + 1]!.offsetPoint_Y);
+
+        canvas.drawPoints(PointMode.points, [offsetPoint1], paint);
 
         //Paint paint = pointsPass[x]!.brushPaint;
-        canvas.drawPoints(PointMode.points, [offsetPoint1], paint);
+        //canvas.drawPoints(PointMode.points, [pointsPass[x]!.point], paint);
       }
     }
   }
