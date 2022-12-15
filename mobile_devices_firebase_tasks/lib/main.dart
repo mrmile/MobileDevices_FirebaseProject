@@ -16,15 +16,19 @@ void main() async
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatelessWidget
+{
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
+  Widget build(BuildContext context)
+  {
+    return MaterialApp
+    (
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
+      theme: ThemeData
+      (
         primarySwatch: Colors.blue,
       ),
       home: const MyHomePage(title: 'PaintScreen'),
@@ -32,7 +36,8 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatefulWidget {
+class MyHomePage extends StatefulWidget
+{
   const MyHomePage({super.key, required this.title});
   final String title;
 
@@ -40,16 +45,42 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class DrawingBrush {
+class DrawingBrush
+{
   Offset point = const Offset(0, 0);
   Paint brushPaint = Paint();
 
   DrawingBrush(this.point, this.brushPaint);
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  List<DrawingBrush?> points = [];
+class DrawingBrushAdapted
+{
+  double offsetPoint_X = 0;
+  double offsetPoint_Y = 0;
+
+
+  int color_R = 255;
+  int color_G = 0;
+  int color_B = 0;
+  int color_A = 255;
+
+  int lineWidth = 5;
+
+
+  DrawingBrushAdapted(this.offsetPoint_X, this.offsetPoint_Y, this.color_R, this.color_G, this.color_B, this.color_A, this.lineWidth);
+}
+
+class _MyHomePageState extends State<MyHomePage>
+{
+  List<DrawingBrushAdapted?> points = [];
+
   Color selectedColor = Colors.red;
+  int currentColor_R = 255;
+  int currentColor_G = 0;
+  int currentColor_B = 0;
+  int currentColor_A = 255;
+  int defaultLineWidth = 5;
+
   int currentSelectedColor = 1;
   //DrawingBrush currentBrush = DrawingBrush({0,0}, Paint() ..color = Colors.black ..strokeCap = StrokeCap.round ..strokeWidth = 2.0);
   //@override
@@ -60,90 +91,114 @@ class _MyHomePageState extends State<MyHomePage> {
   //}
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context)
+  {
     final double referenceWidth = MediaQuery.of(context).size.width;
     final double referenceHeight = MediaQuery.of(context).size.height;
 
-    return Scaffold(
-      body: Center(
-        child: Stack(
+    return Scaffold
+    (
+      body: Center
+      (
+        child: Stack
+        (
           //mainAxisAlignment: MainAxisAlignment.center,
 
-          children: <Widget>[
-            Container(
+          children: <Widget>
+          [
+            Container
+            (
               width: referenceWidth * 0.99,
               height: referenceHeight * 0.99,
               color: const Color.fromARGB(255, 255, 254, 223),
-              child: GestureDetector(
-                onPanDown: (details) {
+              child: GestureDetector
+              (
+                onPanDown: (details)
+                {
                   setState //this.setState...
-                      (() {
-                    points.add(DrawingBrush(
-                        details.localPosition,
-                        Paint()
-                          ..color = selectedColor
-                          ..strokeCap = StrokeCap.round
-                          ..strokeWidth = 2.0));
+                  (() {
+                    //points.add(DrawingBrush(details.localPosition, Paint() ..color = selectedColor ..strokeCap = StrokeCap.round ..strokeWidth = 2.0));
+                    points.add(DrawingBrushAdapted(details.localPosition.dx, details.localPosition.dy, currentColor_R, currentColor_G, currentColor_B, currentColor_A, defaultLineWidth));
                   });
                 },
-                onPanUpdate: (details) {
-                  setState(() {
-                    points.add(DrawingBrush(
-                        details.localPosition,
-                        Paint()
-                          ..color = selectedColor
-                          ..strokeCap = StrokeCap.round
-                          ..strokeWidth = 2.0));
+                onPanUpdate: (details)
+                {
+                  setState //this.setState...
+                  (() {
+                    //points.add(DrawingBrush(details.localPosition, Paint() ..color = selectedColor ..strokeCap = StrokeCap.round ..strokeWidth = 2.0));
+                    points.add(DrawingBrushAdapted(details.localPosition.dx, details.localPosition.dy, currentColor_R, currentColor_G, currentColor_B, currentColor_A, defaultLineWidth));
                   });
                 },
-                onPanEnd: (details) {
-                  setState(() {
+                onPanEnd: (details)
+                {
+                  setState(()
+                  {
                     points.add(null);
                     _saveToFirestore();
                   });
                 },
-                child: CustomPaint(
+                child: CustomPaint
+                (
                   painter: CustomPainterWidged(pointsPass: points),
                 ),
               ),
             ),
-            Row(
+            Row
+            (
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                Column(
+              children: <Widget>
+              [
+                Column
+                (
                     crossAxisAlignment: CrossAxisAlignment.end,
                     mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
+                    children: <Widget>
+                    [
                       const SizedBox(height: 100),
-                      Container(
+                      Container
+                      (
                         height: 35.0,
                         width: 35.0,
                         color: Colors.transparent,
-                        child: FittedBox(
-                          child: FloatingActionButton(
+                        child: FittedBox
+                        (
+                          child: FloatingActionButton
+                          (
                             backgroundColor: Colors.red,
-                            onPressed: () {
+                            onPressed: ()
+                            {
                               currentSelectedColor = 1;
                               setState //this.setState...
-                                  (() {
+                              (() {
                                 selectedColor = Colors.red;
+                                  currentColor_R = 255;
+                                  currentColor_G = 0;
+                                  currentColor_B = 0;
+                                  currentColor_A = 255;
                               });
                             },
-                            child: Container(
-                              decoration: BoxDecoration(
+                            child: Container
+                            (
+                              decoration: BoxDecoration
+                              (
                                 color: Colors.transparent,
-                                borderRadius: const BorderRadius.all(
+                                borderRadius: const BorderRadius.all
+                                (
                                   Radius.circular(100),
                                 ),
-                                boxShadow: [
+                                boxShadow:
+                                [
                                   if (currentSelectedColor == 1)
-                                    (BoxShadow(
+                                  (
+                                    BoxShadow
+                                    (
                                       color: Colors.black.withOpacity(0.3),
                                       spreadRadius: 7,
                                       blurRadius: 7,
                                       offset: const Offset(0, 0),
-                                    )),
+                                    )
+                                  ),
                                 ],
                               ),
                             ),
@@ -151,34 +206,44 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
                       const SizedBox(height: 15),
-                      Container(
+                      Container
+                      (
                         height: 35.0,
                         width: 35.0,
                         color: Colors.transparent,
-                        child: FittedBox(
-                          child: FloatingActionButton(
+                        child: FittedBox
+                        (
+                          child: FloatingActionButton
+                          (
                             backgroundColor: Colors.blue,
-                            onPressed: () {
+                            onPressed: ()
+                            {
                               currentSelectedColor = 2;
                               setState //this.setState...
-                                  (() {
+                              (() {
                                 selectedColor = Colors.blue;
                               });
                             },
-                            child: Container(
-                              decoration: BoxDecoration(
+                            child: Container
+                            (
+                              decoration: BoxDecoration
+                              (
                                 color: Colors.transparent,
-                                borderRadius: const BorderRadius.all(
+                                borderRadius: const BorderRadius.all
+                                (
                                   Radius.circular(100),
                                 ),
-                                boxShadow: [
+                                boxShadow:
+                                [
                                   if (currentSelectedColor == 2)
-                                    (BoxShadow(
+                                  ( BoxShadow
+                                    (
                                       color: Colors.black.withOpacity(0.3),
                                       spreadRadius: 7,
                                       blurRadius: 7,
                                       offset: const Offset(0, 0),
-                                    )),
+                                    )
+                                  ),
                                 ],
                               ),
                             ),
@@ -186,34 +251,44 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
                       const SizedBox(height: 15),
-                      Container(
+                      Container
+                      (
                         height: 35.0,
                         width: 35.0,
                         color: Colors.transparent,
-                        child: FittedBox(
-                          child: FloatingActionButton(
+                        child: FittedBox
+                        (
+                          child: FloatingActionButton
+                          (
                             backgroundColor: Colors.orange,
-                            onPressed: () {
+                            onPressed: ()
+                            {
                               currentSelectedColor = 3;
                               setState //this.setState...
-                                  (() {
+                              (() {
                                 selectedColor = Colors.orange;
                               });
                             },
-                            child: Container(
-                              decoration: BoxDecoration(
+                            child: Container
+                            (
+                              decoration: BoxDecoration
+                              (
                                 color: Colors.transparent,
-                                borderRadius: const BorderRadius.all(
+                                borderRadius: const BorderRadius.all
+                                (
                                   Radius.circular(100),
                                 ),
-                                boxShadow: [
+                                boxShadow:
+                                [
                                   if (currentSelectedColor == 3)
-                                    (BoxShadow(
+                                  ( BoxShadow
+                                    (
                                       color: Colors.black.withOpacity(0.3),
                                       spreadRadius: 7,
                                       blurRadius: 7,
                                       offset: const Offset(0, 0),
-                                    )),
+                                    )
+                                  ),
                                 ],
                               ),
                             ),
@@ -221,34 +296,44 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
                       const SizedBox(height: 15),
-                      Container(
+                      Container
+                      (
                         height: 35.0,
                         width: 35.0,
                         color: Colors.transparent,
-                        child: FittedBox(
-                          child: FloatingActionButton(
+                        child: FittedBox
+                        (
+                          child: FloatingActionButton
+                          (
                             backgroundColor: Colors.green,
-                            onPressed: () {
+                            onPressed: ()
+                            {
                               currentSelectedColor = 4;
                               setState //this.setState...
-                                  (() {
+                              (() {
                                 selectedColor = Colors.green;
                               });
                             },
-                            child: Container(
-                              decoration: BoxDecoration(
+                            child: Container
+                            (
+                              decoration: BoxDecoration
+                              (
                                 color: Colors.transparent,
-                                borderRadius: const BorderRadius.all(
+                                borderRadius: const BorderRadius.all
+                                (
                                   Radius.circular(100),
                                 ),
-                                boxShadow: [
+                                boxShadow:
+                                [
                                   if (currentSelectedColor == 4)
-                                    (BoxShadow(
+                                  ( BoxShadow
+                                    (
                                       color: Colors.black.withOpacity(0.3),
                                       spreadRadius: 7,
                                       blurRadius: 7,
                                       offset: const Offset(0, 0),
-                                    )),
+                                    )
+                                  ),
                                 ],
                               ),
                             ),
@@ -256,34 +341,44 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
                       const SizedBox(height: 15),
-                      Container(
+                      Container
+                      (
                         height: 35.0,
                         width: 35.0,
                         color: Colors.transparent,
-                        child: FittedBox(
-                          child: FloatingActionButton(
+                        child: FittedBox
+                        (
+                          child: FloatingActionButton
+                          (
                             backgroundColor: Colors.yellow,
-                            onPressed: () {
+                            onPressed: ()
+                            {
                               currentSelectedColor = 5;
                               setState //this.setState...
-                                  (() {
+                              (() {
                                 selectedColor = Colors.yellow;
                               });
                             },
-                            child: Container(
-                              decoration: BoxDecoration(
+                            child: Container
+                            (
+                              decoration: BoxDecoration
+                              (
                                 color: Colors.transparent,
-                                borderRadius: const BorderRadius.all(
+                                borderRadius: const BorderRadius.all
+                                (
                                   Radius.circular(100),
                                 ),
-                                boxShadow: [
+                                boxShadow:
+                                [
                                   if (currentSelectedColor == 5)
-                                    (BoxShadow(
+                                  ( BoxShadow
+                                    (
                                       color: Colors.black.withOpacity(0.3),
                                       spreadRadius: 7,
                                       blurRadius: 7,
                                       offset: const Offset(0, 0),
-                                    )),
+                                    )
+                                  ),
                                 ],
                               ),
                             ),
@@ -291,34 +386,45 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
                       const SizedBox(height: 15),
-                      Container(
+                      Container
+                      (
                         height: 35.0,
                         width: 35.0,
                         color: Colors.transparent,
-                        child: FittedBox(
-                          child: FloatingActionButton(
+                        child: FittedBox
+                        (
+                          child: FloatingActionButton
+                          (
                             backgroundColor: Colors.black,
-                            onPressed: () {
+                            onPressed: ()
+                            {
                               currentSelectedColor = 6;
                               setState //this.setState...
-                                  (() {
+                              (() {
                                 selectedColor = Colors.black;
                               });
                             },
-                            child: Container(
-                              decoration: BoxDecoration(
+                            child: Container
+                            (
+                              decoration: BoxDecoration
+                              (
                                 color: Colors.transparent,
-                                borderRadius: const BorderRadius.all(
+                                borderRadius: const BorderRadius.all
+                                (
                                   Radius.circular(100),
                                 ),
-                                boxShadow: [
+                                boxShadow:
+                                [
                                   if (currentSelectedColor == 6)
-                                    (BoxShadow(
+                                  (
+                                    BoxShadow
+                                    (
                                       color: Colors.black.withOpacity(0.3),
                                       spreadRadius: 7,
                                       blurRadius: 7,
                                       offset: const Offset(0, 0),
-                                    )),
+                                    )
+                                  ),
                                 ],
                               ),
                             ),
@@ -326,34 +432,44 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
                       const SizedBox(height: 15),
-                      Container(
+                      Container
+                      (
                         height: 35.0,
                         width: 35.0,
                         color: Colors.transparent,
-                        child: FittedBox(
-                          child: FloatingActionButton(
+                        child: FittedBox
+                        (
+                          child: FloatingActionButton
+                          (
                             backgroundColor: Colors.white,
-                            onPressed: () {
+                            onPressed: ()
+                            {
                               currentSelectedColor = 7;
                               setState //this.setState...
-                                  (() {
+                              (() {
                                 selectedColor = Colors.white;
                               });
                             },
-                            child: Container(
-                              decoration: BoxDecoration(
+                            child: Container
+                            (
+                              decoration: BoxDecoration
+                              (
                                 color: Colors.transparent,
-                                borderRadius: const BorderRadius.all(
+                                borderRadius: const BorderRadius.all
+                                (
                                   Radius.circular(100),
                                 ),
-                                boxShadow: [
+                                boxShadow:
+                                [
                                   if (currentSelectedColor == 7)
-                                    (BoxShadow(
+                                  ( BoxShadow
+                                    (
                                       color: Colors.black.withOpacity(0.3),
                                       spreadRadius: 7,
                                       blurRadius: 7,
                                       offset: const Offset(0, 0),
-                                    )),
+                                    )
+                                  ),
                                 ],
                               ),
                             ),
@@ -361,31 +477,39 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
                       const SizedBox(height: 50),
-                      Container(
+                      Container
+                      (
                         height: 35.0,
                         width: 35.0,
                         color: Colors.transparent,
-                        child: FittedBox(
-                          child: FloatingActionButton(
+                        child: FittedBox
+                        (
+                          child: FloatingActionButton
+                          (
                               backgroundColor: Colors.white,
                               child:
                                   const Icon(Icons.delete, color: Colors.grey),
-                              onPressed: () {
+                              onPressed: ()
+                              {
                                 points.clear();
                               }),
                         ),
                       ),
                       const SizedBox(height: 15),
-                      Container(
+                      Container
+                      (
                         height: 35.0,
                         width: 35.0,
                         color: Colors.transparent,
-                        child: FittedBox(
-                          child: FloatingActionButton(
+                        child: FittedBox
+                        (
+                          child: FloatingActionButton
+                          (
                               backgroundColor: Colors.white,
                               child: const Icon(Icons.chat_bubble,
                                   color: Colors.blue),
-                              onPressed: () {
+                              onPressed: ()
+                              {
                                 // Will take you to the chat screen
                               }),
                         ),
@@ -400,36 +524,34 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void _saveToFirestore() async {
-    final db = FirebaseFirestore.instance;
-    final batch = db.batch();
-    final linesRef = db.collection("/Rooms/amtAzUi4eOJxcTiE5IHt/drawing_lines");
-    // Per tots els punts
-    batch.set(linesRef.doc(), { "a": currentSelectedColor });
-    batch.set(linesRef.doc(), { "a": 1 });
-    batch.set(linesRef.doc(), { "a": 1 });
-    await batch.commit();
+  void _saveToFirestore() async
+  {
+    //final db = FirebaseFirestore.instance;
+    //final batch = db.batch();
+    //final linesRef = db.collection("/Rooms/amtAzUi4eOJxcTiE5IHt/drawing_lines");
+    //// Per tots els punts
+    //batch.set(linesRef.doc(), { "a": currentSelectedColor });
+    //batch.set(linesRef.doc(), { "a": 1 });
+    //batch.set(linesRef.doc(), { "a": 1 });
+    //await batch.commit();
   }
 }
 
-class CustomPainterWidged extends CustomPainter {
-  List<DrawingBrush?> pointsPass;
+class CustomPainterWidged extends CustomPainter
+{
+  List<DrawingBrushAdapted?> pointsPass;
 
   CustomPainterWidged({required this.pointsPass});
 
   @override
-  void paint(Canvas canvas, Size size) {
+  void paint(Canvas canvas, Size size)
+  {
     Paint drawingCanvas = Paint();
     drawingCanvas.color = const Color.fromARGB(255, 255, 254, 223);
 
     Rect canvasRectangle = Rect.fromLTWH(0, 0, size.width, size.height);
 
     canvas.drawRect(canvasRectangle, drawingCanvas);
-
-    //Paint paint = Paint();
-    //paint.color = Colors.black;
-    //paint.strokeWidth = 2.0;
-    //paint.strokeCap = StrokeCap.round;
 
     // int lastPos = 0;
     // int nullPos = pointsPass.indexOf(null, lastPos);
@@ -444,20 +566,35 @@ class CustomPainterWidged extends CustomPainter {
     //   nullPos = pointsPass.indexOf(null, lastPos);
     // }
 
-    for (int x = 0; x < pointsPass.length - 1; x++) {
-      if (pointsPass[x] != null && pointsPass[x + 1] != null) {
-        Paint paint = pointsPass[x]!.brushPaint;
-        canvas.drawLine(pointsPass[x]!.point, pointsPass[x + 1]!.point, paint);
-      } else if (pointsPass[x] != null && pointsPass[x + 1] == null) {
-        Paint paint = pointsPass[x]!.brushPaint;
-        canvas.drawPoints(PointMode.points, [pointsPass[x]!.point], paint);
+    for (int x = 0; x < pointsPass.length - 1; x++)
+    {
+      Paint paint = Paint();
+      paint.color = Color.fromARGB(pointsPass[x]!.color_R, pointsPass[x]!.color_G, pointsPass[x]!.color_B, pointsPass[x]!.color_A);
+      paint.strokeWidth = 2.0;
+      paint.strokeCap = StrokeCap.round;
+
+      if (pointsPass[x] != null && pointsPass[x + 1] != null)
+      {
+        Offset offsetPoint1 = Offset(pointsPass[x]!.offsetPoint_X, pointsPass[x]!.offsetPoint_Y);
+        Offset offsetPoint2 = Offset(pointsPass[x + 1]!.offsetPoint_X, pointsPass[x + 1]!.offsetPoint_Y);
+
+        //Paint paint = pointsPass[x]!.brushPaint;
+        canvas.drawLine(offsetPoint1, offsetPoint2, paint);
+      }
+      else if (pointsPass[x] != null && pointsPass[x + 1] == null)
+      {
+        Offset offsetPoint1 = Offset(pointsPass[x]!.offsetPoint_X, pointsPass[x]!.offsetPoint_Y);
+        Offset offsetPoint2 = Offset(pointsPass[x + 1]!.offsetPoint_X, pointsPass[x + 1]!.offsetPoint_Y);
+
+        //Paint paint = pointsPass[x]!.brushPaint;
+        canvas.drawPoints(PointMode.points, [offsetPoint1], paint);
       }
     }
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    // TODO: implement shouldRepaint
+  bool shouldRepaint(covariant CustomPainter oldDelegate)
+  {
     return true;
   }
 }
