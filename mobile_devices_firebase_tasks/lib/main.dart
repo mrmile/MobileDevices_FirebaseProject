@@ -101,7 +101,7 @@ class _MyHomePageState extends State<MyHomePage>
   {
     final double referenceWidth = MediaQuery.of(context).size.width;
     final double referenceHeight = MediaQuery.of(context).size.height;
-    _loadFromFirestone();
+    //_loadFromFirestone();
     return Scaffold
     (
       body: Center
@@ -572,9 +572,8 @@ class _MyHomePageState extends State<MyHomePage>
       }
     }
 
-    //Testing
-    //batch.set(linesRef.doc(), { "a": 1, "r": 1, "g": 1, "b": 1, "width": 1, "x": 1, "y": 1 });
-
+    //[cloud_firestore/invalid-argument] maximum 500 writes allowed per request
+    //Happens when making lots of commits wich happens often since drawing requires commiting lots of points
     await batch.commit();
   }
 
@@ -588,31 +587,25 @@ class _MyHomePageState extends State<MyHomePage>
     {
       if(points[x] != null)
       {
-        batch.delete(linesRef.doc("$x"));
+        batch.delete(linesRef.doc("$x")); // for some reason it does not do anything
       }
     }
-
-//    final docRef = db.collection("/Rooms/3icgGX91mT2nt8xE9Q0T/drawing_lines").doc("BJ");
-//
-//    // Remove the 'capital' field from the document
-//    final updates = <String, dynamic>
-//    {
-//      "capital": FieldValue.delete(),
-//    };
-//
-//    docRef.update(updates);
-//
-//    //Testing
-//    //batch.set(linesRef.doc(), { "a": 1, "r": 1, "g": 1, "b": 1, "width": 1, "x": 1, "y": 1 });
-//    
-//    await batch.commit();
   }
 
   void _loadFromFirestone() async
   {
     //print("Error getting document");
     final db = FirebaseFirestore.instance;
-    for(int x = 0; x < 260 - 1; x++)
+
+    final CollectionReference<Map<String, dynamic>> courseList = FirebaseFirestore.instance.collection('/Rooms/3icgGX91mT2nt8xE9Q0T/drawing_lines');
+
+    AggregateQuerySnapshot query = await courseList.count().get();
+      debugPrint('The number of courses: ${query.count}');
+
+    int sizeFor = query.count;
+    print("NUMBER OF DOCUMENTS: $sizeFor");
+    
+    for(int x = 0; x < sizeFor; x++)
     {
       final docRef = db.collection("/Rooms/3icgGX91mT2nt8xE9Q0T/drawing_lines").doc("$x");
       docRef.get().then
@@ -625,41 +618,6 @@ class _MyHomePageState extends State<MyHomePage>
         onError: (e) => print("Error getting document: $e"),
       );
     }
-
-    //StreamBuilder
-    //(
-    //  stream: db
-    //      .collection("/Rooms/3icgGX91mT2nt8xE9Q0T/drawing_lines")
-    //      .orderBy("id", descending: true)
-    //      .snapshots(),
-    //  builder:
-    //  (
-    //    BuildContext context,
-    //    AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot,
-    //  )
-    //  {
-    //    //if (snapshot.hasError)
-    //    //{
-    //    //  return ErrorWidget(snapshot.error.toString());
-    //    //}
-    //    //if (!snapshot.hasData)
-    //    //{
-    //    //  return Center(child: CircularProgressIndicator());
-    //    //}
-    //
-    //    final querySnap = snapshot.data!;
-    //    final docs = querySnap.docs;
-    //
-    //    for(int x = 0; x < docs.length - 1; x++)
-    //    {
-    //
-    //      points.add(DrawingBrushAdapted(docs[x].get("x") as double, docs[x].get("y") as double, docs[x].get("r") as int, docs[x].get("g") as int, docs[x].get("b") as int, docs[x].get("a") as int, docs[x].get("width") as int));
-    //    }
-    //    
-    //
-    //    return const Center(child: CircularProgressIndicator());
-    //  },
-    //);
   }
 }
 
@@ -679,6 +637,7 @@ class CustomPainterWidged extends CustomPainter
 
     canvas.drawRect(canvasRectangle, drawingCanvas);
 
+    // Teacher's method
     // int lastPos = 0;
     // int nullPos = pointsPass.indexOf(null, lastPos);
     // while (nullPos != -1) {
@@ -694,8 +653,6 @@ class CustomPainterWidged extends CustomPainter
 
     for (int x = 0; x < pointsPass.length - 1; x++)
     {
-      
-
       if (pointsPass[x] != null && pointsPass[x + 1] != null)
       {
         Paint paint = Paint();
@@ -707,9 +664,6 @@ class CustomPainterWidged extends CustomPainter
         Offset offsetPoint2 = Offset(pointsPass[x + 1]!.offsetPoint_X, pointsPass[x + 1]!.offsetPoint_Y);
 
         canvas.drawLine(offsetPoint1, offsetPoint2, paint);
-
-        //Paint paint = pointsPass[x]!.brushPaint;
-        //canvas.drawLine(pointsPass[x]!.point, pointsPass[x + 1]!.point, paint);
       }
       else if (pointsPass[x] != null && pointsPass[x + 1] == null)
       {
@@ -719,12 +673,7 @@ class CustomPainterWidged extends CustomPainter
         paint.strokeCap = StrokeCap.round;
 
         Offset offsetPoint1 = Offset(pointsPass[x]!.offsetPoint_X, pointsPass[x]!.offsetPoint_Y);
-        //Offset offsetPoint2 = Offset(pointsPass[x + 1]!.offsetPoint_X, pointsPass[x + 1]!.offsetPoint_Y);
-
         canvas.drawPoints(PointMode.points, [offsetPoint1], paint);
-
-        //Paint paint = pointsPass[x]!.brushPaint;
-        //canvas.drawPoints(PointMode.points, [pointsPass[x]!.point], paint);
       }
     }
   }
