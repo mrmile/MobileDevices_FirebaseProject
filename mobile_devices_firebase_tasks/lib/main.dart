@@ -76,9 +76,9 @@ class _MyHomePageState extends State<MyHomePage>
 
   Color selectedColor = Colors.red;
   int currentColor_R = 255;
-  int currentColor_G = 0;
-  int currentColor_B = 0;
-  int currentColor_A = 255;
+  int currentColor_G = 244;
+  int currentColor_B = 67;
+  int currentColor_A = 54;
   int defaultLineWidth = 5;
 
   int currentSelectedColor = 1;
@@ -171,11 +171,11 @@ class _MyHomePageState extends State<MyHomePage>
                               currentSelectedColor = 1;
                               setState //this.setState...
                               (() {
-                                selectedColor = Colors.red;
-                                  currentColor_R = 255;
-                                  currentColor_G = 0;
-                                  currentColor_B = 0;
-                                  currentColor_A = 255;
+                                selectedColor = Color.fromARGB(255, 244, 67, 54);
+                                currentColor_R = 255;
+                                currentColor_G = 244;
+                                currentColor_B = 67;
+                                currentColor_A = 54;
                               });
                             },
                             child: Container
@@ -221,7 +221,11 @@ class _MyHomePageState extends State<MyHomePage>
                               currentSelectedColor = 2;
                               setState //this.setState...
                               (() {
-                                selectedColor = Colors.blue;
+                                selectedColor = Color.fromARGB(255, 33, 150, 243);
+                                currentColor_R = 255;
+                                currentColor_G = 33;
+                                currentColor_B = 150;
+                                currentColor_A = 243;
                               });
                             },
                             child: Container
@@ -266,7 +270,11 @@ class _MyHomePageState extends State<MyHomePage>
                               currentSelectedColor = 3;
                               setState //this.setState...
                               (() {
-                                selectedColor = Colors.orange;
+                                selectedColor = Color.fromARGB(255, 255, 152, 0);
+                                currentColor_R = 255;
+                                currentColor_G = 255;
+                                currentColor_B = 152;
+                                currentColor_A = 0;
                               });
                             },
                             child: Container
@@ -311,7 +319,11 @@ class _MyHomePageState extends State<MyHomePage>
                               currentSelectedColor = 4;
                               setState //this.setState...
                               (() {
-                                selectedColor = Colors.green;
+                                selectedColor = Color.fromARGB(255, 76, 175, 80);
+                                currentColor_R = 255;
+                                currentColor_G = 76;
+                                currentColor_B = 175;
+                                currentColor_A = 80;
                               });
                             },
                             child: Container
@@ -356,7 +368,11 @@ class _MyHomePageState extends State<MyHomePage>
                               currentSelectedColor = 5;
                               setState //this.setState...
                               (() {
-                                selectedColor = Colors.yellow;
+                                selectedColor = Color.fromARGB(255, 255, 235, 59);
+                                currentColor_R = 255;
+                                currentColor_G = 255;
+                                currentColor_B = 235;
+                                currentColor_A = 59;
                               });
                             },
                             child: Container
@@ -401,7 +417,11 @@ class _MyHomePageState extends State<MyHomePage>
                               currentSelectedColor = 6;
                               setState //this.setState...
                               (() {
-                                selectedColor = Colors.black;
+                                selectedColor = Color.fromARGB(255, 0, 0, 0);
+                                currentColor_R = 255;
+                                currentColor_G = 0;
+                                currentColor_B = 0;
+                                currentColor_A = 0;
                               });
                             },
                             child: Container
@@ -447,7 +467,11 @@ class _MyHomePageState extends State<MyHomePage>
                               currentSelectedColor = 7;
                               setState //this.setState...
                               (() {
-                                selectedColor = Colors.white;
+                                selectedColor = Color.fromARGB(255, 255, 255, 255);
+                                currentColor_R = 255;
+                                currentColor_G = 255;
+                                currentColor_B = 255;
+                                currentColor_A = 255;
                               });
                             },
                             child: Container
