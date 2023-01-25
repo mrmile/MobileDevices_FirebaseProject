@@ -104,10 +104,14 @@ class _MyHomePageState extends State<MyHomePage>
     }
     return Scaffold
     (
+      
+      backgroundColor: Color.fromARGB(255, 140, 179, 160),
+
       appBar: AppBar
       (
-        title: const Text("expressART"),
-        surfaceTintColor: Color.fromARGB(255, 255, 242, 169),
+        centerTitle: true,
+        title: const Text("expressART", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),),
+        backgroundColor: Color.fromARGB(255, 255, 249, 216),
       ),
       body: ListView.builder
       (
