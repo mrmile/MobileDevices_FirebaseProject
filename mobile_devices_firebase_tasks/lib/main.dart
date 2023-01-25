@@ -19,9 +19,19 @@ void main() async
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget
+class MyApp extends StatefulWidget
 {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp>
+{
+  //const MyApp({super.key});
+
+  List<Room> rooms = [];
 
   @override
   Widget build(BuildContext context)
@@ -34,15 +44,44 @@ class MyApp extends StatelessWidget
       (
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'PaintScreen'),
+      //home: const MyHomePage(title: 'PaintScreen'),
+
+      routes:
+      {
+        '/': (context) => MyHomePage
+        (
+          rooms: rooms,
+        ),
+        '/drawing': (context) => DrawingScreen
+        (
+          rooms: rooms,
+        ),
+        //'/chat': (context) => ChatScreen
+        //(
+        //  //tables: tables,
+        //),
+      },
     );
   }
 }
 
+class Room
+{
+  final int roomNumber;
+  final int ID;
+
+  Room(this.roomNumber, this.ID);
+}
+
 class MyHomePage extends StatefulWidget
 {
-  const MyHomePage({super.key, required this.title});
-  final String title;
+  MyHomePage
+  ({
+    Key? key,
+    required this.rooms,
+  }) : super(key: key);
+
+  List<Room> rooms = [];
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -50,31 +89,58 @@ class MyHomePage extends StatefulWidget
 
 class _MyHomePageState extends State<MyHomePage>
 {
-
+  int lastID = 0;
+  List<Room> rooms = [];
 
   @override
   Widget build(BuildContext context)
   {
-    
+    if(rooms.length < 6)
+    {
+      for(int i = 1; i <= 6; i++)
+      {
+        rooms.add(Room(i, ++lastID));
+      }
+    }
     return Scaffold
     (
-      body: Stack
+      appBar: AppBar
       (
-        children:
-        [
-          
-          Column
-          (
-            children: const
-            [
-              //Expanded(flex: 1, child: RoomScreen()), Not created yet
-              Expanded(flex: 3, child: DrawingScreen()),
-              //Expanded(flex: 2, child: ChatScreen()), Not created yet
-            ],
-          ),
-        ],
+        title: const Text("expressART"),
+        surfaceTintColor: Color.fromARGB(255, 255, 242, 169),
       ),
+      body: ListView.builder
+      (
+        itemCount: rooms.length,
+
+        itemBuilder: (context, index)
+        {
+          final room = rooms[index];
+
+          return ListTile
+          (
+            leading: const CircleAvatar
+            (
+              backgroundImage: NetworkImage
+              (
+                "https://www.google.com/url?sa=i&url=https%3A%2F%2Fsalmorejogeek.com%2F2019%2F05%2F31%2Fcomo-cambiar-al-color-negro-el-icono-de-telegram-en-ios%2F&psig=AOvVaw3CPHfUqu9CLLtH3h_hXNYu&ust=1674764714750000&source=images&cd=vfe&ved=0CBAQjRxqFwoTCPCM_fPG4_wCFQAAAAAdAAAAABAg",
+                scale: 1,
+              ),
+              //backgroundImage: NetworkImage("https://www.google.com/url?sa=i&url=https%3A%2F%2Ficones.pro%2Fes%2Ficono-de-hoja-verde-simbolo-png%2F&psig=AOvVaw3CPHfUqu9CLLtH3h_hXNYu&ust=1674764714750000&source=images&cd=vfe&ved=0CBAQjRxqFwoTCPCM_fPG4_wCFQAAAAAdAAAAABAb"),
+            ),
+            title: Text("Room ${room.roomNumber}"),
+
+            onTap: ()
+            {
+              Navigator.of(context).pushNamed
+              (
+                '/drawing',
+                arguments: room.roomNumber,
+              );
+            }
+          );
+        }
+      )
     );
-    
   }
 }

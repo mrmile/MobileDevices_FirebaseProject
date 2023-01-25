@@ -6,11 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:mobile_devices_firebase_tasks/firebase_options.dart';
 
 //import 'drawingScreenButtonsBar.dart';
+import 'main.dart';
 
 class DrawingScreen extends StatefulWidget
 {
-  const DrawingScreen({super.key});
-
+  DrawingScreen({super.key, required this.rooms});
+  List<Room> rooms = [];
 
   @override
   State<DrawingScreen> createState() => _DrawingScreenState();
@@ -57,22 +58,31 @@ class _DrawingScreenState extends State<DrawingScreen>
   double poss_X = 0;
   double poss_Y = 0;
 
+  int currentRoom = 0;
+  bool loadedDrawing = false;
+
   //DrawingBrush currentBrush = DrawingBrush({0,0}, Paint() ..color = Colors.black ..strokeCap = StrokeCap.round ..strokeWidth = 2.0);
 
   @override
   void initState()
   {
     super.initState();
-    _loadFromFirestone();
+    //_loadFromFirestone();
   }
 
 
   @override
   Widget build(BuildContext context)
   {
+    final room_number = ModalRoute.of(context)!.settings.arguments as int;
+    currentRoom = room_number;
     final double referenceWidth = MediaQuery.of(context).size.width;
     final double referenceHeight = MediaQuery.of(context).size.height;
-    //_loadFromFirestone();
+    if(loadedDrawing == false)
+    {
+      _loadFromFirestone();
+      loadedDrawing = true;
+    }
     return Scaffold
     (
       body: Center
@@ -85,6 +95,7 @@ class _DrawingScreenState extends State<DrawingScreen>
           [
             Container
             (
+              
               width: referenceWidth * 0.99,
               height: referenceHeight * 0.99,
               color: const Color.fromARGB(255, 255, 254, 223),
@@ -150,6 +161,7 @@ class _DrawingScreenState extends State<DrawingScreen>
                         (
                           child: FloatingActionButton
                           (
+                            heroTag: "btn1",
                             backgroundColor: Colors.red,
                             onPressed: ()
                             {
@@ -200,6 +212,7 @@ class _DrawingScreenState extends State<DrawingScreen>
                         (
                           child: FloatingActionButton
                           (
+                            heroTag: "btn2",
                             backgroundColor: Colors.blue,
                             onPressed: ()
                             {
@@ -249,6 +262,7 @@ class _DrawingScreenState extends State<DrawingScreen>
                         (
                           child: FloatingActionButton
                           (
+                            heroTag: "btn3",
                             backgroundColor: Colors.orange,
                             onPressed: ()
                             {
@@ -298,6 +312,7 @@ class _DrawingScreenState extends State<DrawingScreen>
                         (
                           child: FloatingActionButton
                           (
+                            heroTag: "btn4",
                             backgroundColor: Colors.green,
                             onPressed: ()
                             {
@@ -347,6 +362,7 @@ class _DrawingScreenState extends State<DrawingScreen>
                         (
                           child: FloatingActionButton
                           (
+                            heroTag: "btn5",
                             backgroundColor: Colors.yellow,
                             onPressed: ()
                             {
@@ -396,6 +412,7 @@ class _DrawingScreenState extends State<DrawingScreen>
                         (
                           child: FloatingActionButton
                           (
+                            heroTag: "btn6",
                             backgroundColor: Colors.black,
                             onPressed: ()
                             {
@@ -446,6 +463,7 @@ class _DrawingScreenState extends State<DrawingScreen>
                         (
                           child: FloatingActionButton
                           (
+                            heroTag: "btn7",
                             backgroundColor: Colors.white,
                             onPressed: ()
                             {
@@ -496,6 +514,7 @@ class _DrawingScreenState extends State<DrawingScreen>
                         (
                           child: FloatingActionButton
                           (
+                            heroTag: "btn8",
                               backgroundColor: Colors.white,
                               child:
                                   const Icon(Icons.delete, color: Colors.grey),
@@ -516,6 +535,7 @@ class _DrawingScreenState extends State<DrawingScreen>
                         (
                           child: FloatingActionButton
                           (
+                            heroTag: "btn9",
                               backgroundColor: Colors.white,
                               child: const Icon(Icons.chat_bubble, color: Colors.blue),
                               onPressed: ()
@@ -537,63 +557,72 @@ class _DrawingScreenState extends State<DrawingScreen>
 
   void _saveToFirestore() async
   {
-    final db = FirebaseFirestore.instance;
-    final batch = db.batch();
-    final linesRef = db.collection("/Rooms/3icgGX91mT2nt8xE9Q0T/drawing_lines");
-    // Per tots els punts
-    for(int x = 0; x < points.length - 1; x++)
+    if(currentRoom != 0)
     {
-      if(points[x] != null)
+      final db = FirebaseFirestore.instance;
+      final batch = db.batch();
+      final linesRef = db.collection("/Rooms/room_$currentRoom/drawing_lines");
+      // Per tots els punts
+      for(int x = 0; x < points.length - 1; x++)
       {
-        batch.set(linesRef.doc("$x"), { "a": points[x]!.color_A, "r": points[x]!.color_R, "g": points[x]!.color_G, "b": points[x]!.color_B, "width": points[x]!.lineWidth, "x": points[x]!.offsetPoint_X, "y": points[x]!.offsetPoint_Y, "id": x });
+        if(points[x] != null)
+        {
+          batch.set(linesRef.doc("$x"), { "a": points[x]!.color_A, "r": points[x]!.color_R, "g": points[x]!.color_G, "b": points[x]!.color_B, "width": points[x]!.lineWidth, "x": points[x]!.offsetPoint_X, "y": points[x]!.offsetPoint_Y, "id": x });
+        }
       }
-    }
 
-    //[cloud_firestore/invalid-argument] maximum 500 writes allowed per request
-    //Happens when making lots of commits wich happens often since drawing requires commiting lots of points
-    await batch.commit();
+      //[cloud_firestore/invalid-argument] maximum 500 writes allowed per request
+      //Happens when making lots of commits wich happens often since drawing requires commiting lots of points
+      await batch.commit();
+    }
   }
 
   void _deleteFromFirestore() async
   {
-    final db = FirebaseFirestore.instance;
-    final batch = db.batch();
-    final linesRef = db.collection("/Rooms/3icgGX91mT2nt8xE9Q0T/drawing_lines");
-    // Per tots els punts
-    for(int x = 0; x < points.length - 1; x++)
+    if(currentRoom != 0)
     {
-      if(points[x] != null)
+      final db = FirebaseFirestore.instance;
+      final batch = db.batch();
+      final linesRef = db.collection("/Rooms/room_$currentRoom/drawing_lines");
+      // Per tots els punts
+      for(int x = 0; x < points.length - 1; x++)
       {
-        batch.delete(linesRef.doc("$x")); // for some reason it does not do anything
+        if(points[x] != null)
+        {
+          batch.delete(linesRef.doc("$x")); // for some reason it does not do anything
+        }
       }
-    }
+      }
   }
 
   void _loadFromFirestone() async
   {
-    //print("Error getting document");
-    final db = FirebaseFirestore.instance;
-
-    final CollectionReference<Map<String, dynamic>> courseList = FirebaseFirestore.instance.collection('/Rooms/3icgGX91mT2nt8xE9Q0T/drawing_lines');
-
-    AggregateQuerySnapshot query = await courseList.count().get();
-      debugPrint('The number of courses: ${query.count}');
-
-    int sizeFor = query.count;
-    print("NUMBER OF DOCUMENTS: $sizeFor");
-    
-    for(int x = 0; x < sizeFor; x++)
+    if(currentRoom != 0)
     {
-      final docRef = db.collection("/Rooms/3icgGX91mT2nt8xE9Q0T/drawing_lines").doc("$x");
-      docRef.get().then
-      (
-        (DocumentSnapshot doc)
-        {
-    
-          points.add(DrawingBrushAdapted(doc.get("x") as double, doc.get("y") as double, doc.get("r") as int, doc.get("g") as int, doc.get("b") as int, doc.get("a") as int, doc.get("width") as int));
-        },
-        onError: (e) => print("Error getting document: $e"),
-      );
+      //print("Error getting document");
+      final db = FirebaseFirestore.instance;
+
+      final CollectionReference<Map<String, dynamic>> courseList = FirebaseFirestore.instance.collection('/Rooms/room_$currentRoom/drawing_lines');
+
+      AggregateQuerySnapshot query = await courseList.count().get();
+        debugPrint('The number of courses: ${query.count}');
+
+      int sizeFor = query.count;
+      print("NUMBER OF DOCUMENTS: $sizeFor");
+
+      for(int x = 0; x < sizeFor; x++)
+      {
+        final docRef = db.collection("/Rooms/room_$currentRoom/drawing_lines").doc("$x");
+        docRef.get().then
+        (
+          (DocumentSnapshot doc)
+          {
+          
+            points.add(DrawingBrushAdapted(doc.get("x") as double, doc.get("y") as double, doc.get("r") as int, doc.get("g") as int, doc.get("b") as int, doc.get("a") as int, doc.get("width") as int));
+          },
+          onError: (e) => print("Error getting document: $e"),
+        );
+      }
     }
   }
 }
