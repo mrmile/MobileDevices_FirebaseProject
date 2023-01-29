@@ -49,7 +49,9 @@ class _MyAppState extends State<MyApp> {
         '/drawing': (context) => DrawingScreen(
               rooms: rooms,
             ),
-        '/chat': (context) => ScreenChat(),
+        '/chat': (context) => ScreenChat(
+              rooms: rooms,
+            ),
       },
     );
   }

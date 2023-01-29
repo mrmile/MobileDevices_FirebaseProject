@@ -13,9 +13,9 @@ class Message {
         text = docSnap['text'];
 }
 
-Stream<List<Message>> dbGetMessages(String chatID) async* {
+Stream<List<Message>> dbGetMessages(int currentRoom) async* {
   final db = FirebaseFirestore.instance;
-  final messagePath = "/Rooms/$chatID/room_chat";
+  final messagePath = "/Rooms/room_$currentRoom/chat";
   final query =
       db.collection(messagePath).orderBy("date", descending: true).limit(100);
 

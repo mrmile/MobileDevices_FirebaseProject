@@ -3,14 +3,24 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:mobile_devices_firebase_tasks/firebase_options.dart';
 import 'package:mobile_devices_firebase_tasks/messages.dart';
 import 'package:flutter/material.dart';
+import 'main.dart';
 
-class ScreenChat extends StatelessWidget {
-  const ScreenChat({super.key});
+class ScreenChat extends StatefulWidget {
+  ScreenChat({super.key, required this.rooms});
+  List<Room> rooms = [];
+
+  @override
+  State<ScreenChat> createState() => _ScreenChatState();
+}
+
+class _ScreenChatState extends State<ScreenChat> {
+  int currentRoom = 0;
 
   @override
   Widget build(BuildContext context) {
+    final room_number = ModalRoute.of(context)!.settings.arguments as int;
+    currentRoom = room_number;
     final db = FirebaseFirestore.instance;
-    final chatID = ModalRoute.of(context)!.settings.arguments as String;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Room chat'),
@@ -22,7 +32,7 @@ class ScreenChat extends StatelessWidget {
           const Expanded(child: Messages()),
           BoxMessage(
             whenMessageSent: (String text) {
-              db.collection("/Rooms/$chatID/room_chat").add(
+              db.collection("/Rooms/room_$currentRoom/chat").add(
                 {
                   'text': text,
                   'author': 'competitor',
@@ -42,9 +52,9 @@ class Messages extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final chatId = ModalRoute.of(context)!.settings.arguments as String;
+    final room_number = ModalRoute.of(context)!.settings.arguments as int;
     return StreamBuilder(
-      stream: dbGetMessages(chatId),
+      stream: dbGetMessages(room_number),
       builder: (
         BuildContext context,
         AsyncSnapshot<List<Message>> snapshot,
